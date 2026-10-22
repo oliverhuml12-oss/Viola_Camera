@@ -18,7 +18,9 @@ python3 -m http.server 8000
 # then open http://localhost:8000/camera-check.html
 ```
 
+On Vercel, `vercel.json` serves the page at the site root (`/`).
+
 ## Notes
 
-- Brand colours in the `:root` tokens are placeholders; replace them with the exact Viola colours.
+- Styling follows the Viola UK website: Onest font, blue/ink colour tokens, pill buttons and soft cards. The logo lives in `images/logo.png`.
 - The "Continue" button currently only shows a mock note where the next test step would go.
