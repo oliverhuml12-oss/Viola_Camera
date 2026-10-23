@@ -1,5 +1,13 @@
 {
   "rewrites": [
-    { "source": "/", "destination": "/camera-check.html" }
+    { "source": "/", "destination": "/camera-check.html" },
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/call/:room", "destination": "/call.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(admin|admin.html|call/.*|call.html|api/.*)",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    }
   ]
 }
