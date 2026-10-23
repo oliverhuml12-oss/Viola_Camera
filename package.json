@@ -1,0 +1,6 @@
+{
+  "name": "viola-camera",
+  "private": true,
+  "type": "module",
+  "description": "Viola camera check + Daily video call demo (static pages + Vercel functions, no dependencies)"
+}

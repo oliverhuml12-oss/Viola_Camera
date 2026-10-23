@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Viola – Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/viola.css">
+<style>
+  :root { --page-width: 1100px; }
+  main { max-width: var(--page-width); margin: 0 auto; padding: 24px 20px 64px; }
+  .tag { font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--blue); margin: 0 0 8px; }
+
+  .create { display: grid; grid-template-columns: 1fr 200px auto; gap: 16px; align-items: end; }
+  @media (max-width: 760px) { .create { grid-template-columns: 1fr; } }
+
+  .result {
+    margin-top: 20px; background: var(--surface); border: 2px solid var(--blue-100);
+    border-radius: 20px; padding: 18px 20px;
+  }
+  .result h2 { font-size: 18px; color: var(--ok); margin: 0 0 6px; }
+  .link-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .link-box {
+    flex: 1 1 320px; min-width: 0; font-family: ui-monospace, Menlo, monospace; font-size: 15px;
+    background: var(--field); border-radius: 12px; padding: 12px 14px; overflow-x: auto; white-space: nowrap;
+  }
+  .error { color: var(--bad); font-weight: 600; margin: 14px 0 0; }
+
+  .section-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin: 40px 0 14px; }
+  .section-head h2 { margin: 0; }
+
+  .table-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  th { text-align: left; font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; padding: 14px 16px; background: var(--bg-soft); white-space: nowrap; }
+  td { padding: 14px 16px; border-top: 1px solid var(--line); vertical-align: middle; }
+  td.room { font-weight: 700; word-break: break-all; }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .soon { color: var(--bad); font-weight: 700; }
+  .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--line); margin-right: 8px; vertical-align: middle; }
+  .dot.live { background: var(--ok); box-shadow: 0 0 0 4px var(--ok-soft); }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .empty { text-align: center; color: var(--muted); padding: 36px 16px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <a class="brand" href="/admin" aria-label="Viola">
+      <img src="/images/logo.png" alt="Viola" width="111" height="34" onerror="this.hidden=true;this.nextElementSibling.hidden=false">
+      <span class="wordmark" hidden>Viola</span>
+    </a>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="cs">CZ</button>
+      <button type="button" data-lang="sk">SK</button>
+      <button type="button" data-lang="en">EN</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <p class="tag">Demo</p>
+  <h1 data-t="admin.title"></h1>
+  <p class="lead" data-t="admin.lead"></p>
+
+  <section class="card">
+    <form class="create" id="createForm">
+      <div>
+        <label class="field" for="nameInput" data-t="admin.nameLabel"></label>
+        <input type="text" id="nameInput" autocomplete="off" maxlength="60" data-t-placeholder="admin.namePlaceholder">
+      </div>
+      <div>
+        <label class="field" for="langSelect" data-t="admin.langLabel"></label>
+        <select id="langSelect">
+          <option value="cs" data-t="lang.cs"></option>
+          <option value="sk" data-t="lang.sk"></option>
+          <option value="en" data-t="lang.en"></option>
+        </select>
+      </div>
+      <button class="btn" id="createBtn" type="submit" data-t="admin.create"></button>
+    </form>
+
+    <p class="error" id="createError" hidden></p>
+
+    <div class="result" id="result" hidden>
+      <h2 data-t="admin.created"></h2>
+      <p class="small" id="resultUntil" style="margin:0 0 10px"></p>
+      <div class="link-row">
+        <div class="link-box" id="resultLink"></div>
+        <button class="btn small-btn" type="button" id="resultCopy" data-t="admin.copy"></button>
+        <a class="btn soft small-btn" id="resultOpen" target="_blank" rel="noopener" data-t="admin.open"></a>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-head">
+    <h2 data-t="admin.activeTitle"></h2>
+    <span class="small" id="updated"></span>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th data-t="admin.colRoom"></th>
+          <th data-t="admin.colCreated"></th>
+          <th data-t="admin.colCloses"></th>
+          <th data-t="admin.colInCall"></th>
+          <th data-t="admin.colLang"></th>
+          <th data-t="admin.colActions"></th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+  <p class="error" id="listError" hidden></p>
+</main>
+
+<script src="/assets/i18n.js"></script>
+<script src="/assets/admin.js"></script>
+</body>
+</html>
